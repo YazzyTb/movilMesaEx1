@@ -1,0 +1,2 @@
+/mnt/Local/Todo/Flutter/exam1_software_movil/android/app/.cxx/Debug/6c5452y2/x86/CMakeFiles/rebuild_cache.dir
+/mnt/Local/Todo/Flutter/exam1_software_movil/android/app/.cxx/Debug/6c5452y2/x86/CMakeFiles/edit_cache.dir
