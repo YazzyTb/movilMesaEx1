@@ -181,8 +181,8 @@ class _HomePageState extends State<HomePage> with WidgetsBindingObserver {
                           : null,
                     ),
                     const GButton(
-                      icon: CupertinoIcons.book_fill,
-                      text: 'Libros',
+                      icon: Icons.storefront,
+                      text: 'Productos',
                       iconSize: 22,
                     ),
                     const GButton(

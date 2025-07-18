@@ -93,7 +93,7 @@ void main() {
 
       // Verificamos que vemos los elementos esperados
       expect(find.text('Añadir al carrito'), findsOneWidget);
-      expect(find.text('Libro de prueba'), findsOneWidget);
+      expect(find.text('Producto de prueba'), findsOneWidget);
       expect(find.text('\$25.99'), findsOneWidget);
       expect(find.text('Stock: 10'), findsOneWidget);
 
@@ -118,10 +118,10 @@ void main() {
       // ARRANGE
       final testBook = Book(
         id: 101,
-        nombre: 'Libro de prueba',
+        nombre: 'Producto de prueba',
         descripcion: 'Descripción de prueba',
         stock: 10,
-        imagen: 'http://example.com/book.jpg',
+        imagen: 'https://www.celulares.com/fotos/xiaomi-poco-x7-pro-98030-g.jpg',
         precio: '25.99',
         isActive: true,
       );
@@ -138,10 +138,10 @@ void main() {
             id: 1,
             producto: BookCartInfo(
               id: 101,
-              nombre: 'Libro de prueba',
+              nombre: 'Producto de prueba',
               precio: '25.99',
               stock: 10,
-              imagen: 'http://example.com/book.jpg',
+              imagen: 'https://www.tutiendaexperta.com/5109-large_default_2x/xiaomi-redmi-note-14-pro-5g-8gb256gb.jpg',
             ),
             cantidad: 1,
             precioUnitario: '25.99',
@@ -170,10 +170,10 @@ void main() {
       // ARRANGE
       final testBook = Book(
         id: 101,
-        nombre: 'Libro de prueba',
+        nombre: 'Producto de prueba',
         descripcion: 'Descripción de prueba',
         stock: 10,
-        imagen: 'http://example.com/book.jpg',
+        imagen: 'https://corprotec.com/wp-content/uploads/2024/01/Honor-200-pro.webp',
         precio: '25.99',
         isActive: true,
       );

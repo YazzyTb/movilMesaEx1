@@ -26,13 +26,13 @@ class NovaLogo extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.auto_stories_rounded,
+              Icons.shopping_cart,  // <-- Aquí el cambio
               color: primaryColor,
               size: size,
             ),
             const SizedBox(width: 12),
             Text(
-              'NOVA',
+              'Smart',
               style: GoogleFonts.montserrat(
                 fontSize: size * 0.8,
                 fontWeight: FontWeight.w800,
@@ -43,7 +43,7 @@ class NovaLogo extends StatelessWidget {
           ],
         ),
         Text(
-          'LIBRERÍA',
+          'SHOP',
           style: GoogleFonts.montserrat(
             fontSize: size * 0.3,
             fontWeight: FontWeight.w600,
@@ -53,5 +53,6 @@ class NovaLogo extends StatelessWidget {
         ),
       ],
     );
+
   }
 }

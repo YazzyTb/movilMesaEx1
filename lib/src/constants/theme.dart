@@ -2,35 +2,34 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class AppTheme {
-  // Private constructor to prevent instantiation
   AppTheme._();
 
-  // Brand colors
-  static const Color primaryLight = Color(0xFF5E35B1); // Deep Purple 600
-  static const Color secondaryLight = Color(0xFF3949AB); // Indigo 600
-  static const Color accentLight = Color(0xFF00BFA5); // Teal Accent 400
+ // Brand colors (contraste naranja + azul + púrpura)
+static const Color primaryLight = Color(0xFFFF6F00); // Naranja
+static const Color secondaryLight = Color(0xFF039BE5); // Azul cielo
+static const Color accentLight = Color(0xFF8E24AA); // Púrpura
 
-  static const Color primaryDark = Color(0xFF7E57C2); // Deep Purple 400
-  static const Color secondaryDark = Color(0xFF5C6BC0); // Indigo 400
-  static const Color accentDark = Color(0xFF1DE9B6); // Teal Accent 300
+static const Color primaryDark = Color(0xFFFF8F00); // Naranja más suave
+static const Color secondaryDark = Color(0xFF40C4FF); // Azul claro
+static const Color accentDark = Color(0xFFCE93D8); // Lavanda clara
 
-  // Background colors
-  static const Color backgroundLight = Color(0xFFF5F5F5);
-  static const Color backgroundDark = Color(0xFF121212);
+// Backgrounds
+static const Color backgroundLight = Color(0xFFFFFDE7); // Amarillo muy claro
+static const Color backgroundDark = Color(0xFF121212);
 
-  // Surface colors
-  static const Color surfaceLight = Color(0xFFFFFFFF);
-  static const Color surfaceDark = Color(0xFF1E1E1E);
+// Surfaces
+static const Color surfaceLight = Color(0xFFFFFFFF);
+static const Color surfaceDark = Color(0xFF1E1E1E);
 
-  // Error colors
-  static const Color errorLight = Color(0xFFB00020);
-  static const Color errorDark = Color(0xFFCF6679);
+// Error colors
+static const Color errorLight = Color(0xFFD84315); // Rojo cálido
+static const Color errorDark = Color(0xFFFF8A65);  // Rojo suave
 
-  // Text colors
-  static const Color textPrimaryLight = Color(0xFF212121);
-  static const Color textSecondaryLight = Color(0xFF757575);
-  static const Color textPrimaryDark = Color(0xFFEEEEEE);
-  static const Color textSecondaryDark = Color(0xFFAAAAAA);
+// Text
+static const Color textPrimaryLight = Color(0xFF212121);
+static const Color textSecondaryLight = Color(0xFF757575);
+static const Color textPrimaryDark = Color(0xFFFFFFFF);
+static const Color textSecondaryDark = Color(0xFFEEEEEE);
 
   // Light Theme
   static ThemeData light() {

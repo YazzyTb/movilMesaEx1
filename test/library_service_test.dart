@@ -7,10 +7,10 @@ void main() {
     test('Book model should correctly parse JSON data with new structure', () {
       final Map<String, dynamic> jsonData = {
         "id": 1,
-        "nombre": "Cien Años de Soledad",
+        "nombre": "Xiaomi Redmi Note 14 Pro",
         "descripcion": "Novela de Gabriel García Márquez",
         "stock": 30,
-        "imagen": "https://ejemplo.com/libro.jpg",
+        "imagen": "https://www.tutiendaexperta.com/5109-large_default_2x/xiaomi-redmi-note-14-pro-5g-8gb256gb.jpg",
         "precio": "49.99",
         "categoria": {"id": 2, "nombre": "Libros", "is_active": true},
         "genero": {"id": 2, "nombre": "COMEDIA", "is_active": true},

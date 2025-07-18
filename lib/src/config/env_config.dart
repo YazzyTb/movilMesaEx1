@@ -23,7 +23,7 @@ class EnvConfig {
       int.tryParse(dotenv.env['API_TIMEOUT'] ?? '60') ?? 60;
 
   /// App Information
-  static String get appName => dotenv.env['APP_NAME'] ?? 'NOVA Librería';
+  static String get appName => dotenv.env['APP_NAME'] ?? 'Smart Shop';
   static String get appVersion => dotenv.env['APP_VERSION'] ?? '1.0.0';
 
   /// Stripe Configuration

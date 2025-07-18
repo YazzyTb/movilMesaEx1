@@ -177,13 +177,13 @@ class BookDetailsPage extends StatelessWidget {
                                           _buildInfoRow(
                                             context,
                                             Icons.person_outline,
-                                            'Autor: ${book.autor?.nombre}',
+                                            'Fabricante: ${book.autor?.nombre}',
                                           ),
                                         if (book.editorial != null)
                                           _buildInfoRow(
                                             context,
                                             Icons.business_outlined,
-                                            'Editorial: ${book.editorial?.nombre}',
+                                            'Modelo: ${book.editorial?.nombre}',
                                           ),
                                         if (book.categoria != null)
                                           _buildInfoRow(
@@ -323,7 +323,7 @@ class BookDetailsPage extends StatelessWidget {
                       // Genre info if available
                       if (book.genero != null) ...[
                         Text(
-                          'Género',
+                          'Marca',
                           style: theme.textTheme.titleLarge,
                         ),
                         const SizedBox(height: 8),

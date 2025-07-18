@@ -70,27 +70,8 @@ class LoginPage extends StatelessWidget {
 
                   const SizedBox(height: 24),
 
-                  // Social login buttons
-                  SocialLoginButtons(
-                    onGooglePressed: () {
-                      // TODO: Implement Google login
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Google login no implementado'),
-                          backgroundColor: colorScheme.error,
-                        ),
-                      );
-                    },
-                    onFacebookPressed: () {
-                      // TODO: Implement Facebook login
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('Facebook login no implementado'),
-                          backgroundColor: colorScheme.error,
-                        ),
-                      );
-                    },
-                  ),
+                  
+                  
 
                   const SizedBox(height: 24),
 

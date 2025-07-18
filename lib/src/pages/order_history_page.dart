@@ -172,7 +172,7 @@ class _OrderHistoryPageState extends State<OrderHistoryPage> {
                 Navigator.pushReplacementNamed(context, Routes.BOOKS);
               },
               icon: const Icon(Icons.shopping_bag_outlined),
-              label: const Text('Ver Libros Disponibles'),
+              label: const Text('Ver productos Disponibles'),
             ),
           ],
         ),

@@ -219,7 +219,7 @@ class _BooksPageState extends State<BooksPage> {
                             });
                           },
                           decoration: InputDecoration(
-                            hintText: 'Buscar libros...',
+                            hintText: 'Buscando...',
                             prefixIcon: Icon(
                               Icons.search,
                               color: theme.colorScheme.primary,
@@ -384,7 +384,7 @@ class _BooksPageState extends State<BooksPage> {
                             ),
                             const SizedBox(height: 16),
                             Text(
-                              'No se encontraron libros',
+                              'No se encontraron productos',
                               style: theme.textTheme.titleLarge,
                             ),
                             const SizedBox(height: 8),
@@ -745,7 +745,7 @@ class _VoiceRecognitionDialogState extends State<_VoiceRecognitionDialog> {
     }
 
     if (_service.lastWords.isEmpty) {
-      return 'Diga el nombre del libro que desea agregar al carrito';
+      return 'Diga el nombre del producto que desea agregar al carrito';
     }
 
     return _service.lastWords;
@@ -789,7 +789,7 @@ class _ErrorView extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'Error al cargar los libros',
+                    'Error al cargar los productos',
                     style: theme.textTheme.headlineSmall,
                     textAlign: TextAlign.center,
                   ),
@@ -859,13 +859,13 @@ class _EmptyBooksView extends StatelessWidget {
                   ),
                   const SizedBox(height: 16),
                   Text(
-                    'No hay libros disponibles',
+                    'No hay productos disponibles',
                     style: theme.textTheme.headlineSmall,
                     textAlign: TextAlign.center,
                   ),
                   const SizedBox(height: 8),
                   Text(
-                    'No se encontraron libros en nuestro catálogo',
+                    'No se encontraron productos en nuestro catálogo',
                     style: theme.textTheme.bodyMedium,
                     textAlign: TextAlign.center,
                   ),

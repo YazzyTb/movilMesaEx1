@@ -249,7 +249,7 @@ class MyPhotosPage extends StatelessWidget {
 
                   // App info
                   Text(
-                    "NOVA Librería v1.0.0",
+                    "Smart Shop v1.0.0",
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onBackground.withOpacity(0.5),
                     ),
