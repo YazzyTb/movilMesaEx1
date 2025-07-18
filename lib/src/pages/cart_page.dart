@@ -656,7 +656,7 @@ class _EmptyCartView extends StatelessWidget {
                         const SizedBox(width: 12),
                         Expanded(
                           child: Text(
-                            'Libros que podrían interesarte',
+                            'Productos que podrían interesarte',
                             style: theme.textTheme.titleLarge?.copyWith(
                               fontWeight: FontWeight.bold,
                               color: colorScheme.onSurface,

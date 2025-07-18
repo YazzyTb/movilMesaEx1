@@ -97,34 +97,34 @@ class RecommendationService with ChangeNotifier {
     _recommendations = [
       Book(
         id: 101,
-        nombre: "Cien años de soledad",
+        nombre: "Xiaomi Redmi Note 14 PRO 5G 8+256GB Blanco",
         descripcion:
-            "Una de las obras más importantes de la literatura latinoamericana",
+            "El Xiaomi Redmi Note 14 Pro 5G es la opción ideal para quienes buscan un smartphone con tecnología de última generación, conectividad ultrarrápida y un rendimiento excepcional en todas sus funciones",
         stock: 15,
         imagen:
-            "https://images.unsplash.com/photo-1544947950-fa07a98d237f?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        precio: "24.99",
+            "https://www.tutiendaexperta.com/5109-large_default_2x/xiaomi-redmi-note-14-pro-5g-8gb256gb.jpg",
+        precio: "3500",
         isActive: true,
       ),
       Book(
         id: 102,
-        nombre: "El principito",
+        nombre: "Xiaomi Poco X7 8+256GB Negro",
         descripcion:
-            "Una historia poética que aborda temas profundos como el sentido de la vida",
+            "El Xiaomi Poco X7 es la elección perfecta para quienes buscan potencia, almacenamiento y una experiencia fluida en un smartphone confiable y moderno.",
         stock: 20,
         imagen:
-            "https://images.unsplash.com/photo-1589998059171-988d887df646?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        precio: "14.99",
+            "https://www.celulares.com/fotos/xiaomi-poco-x7-pro-98030-g.jpg",
+        precio: "4500",
         isActive: true,
       ),
       Book(
         id: 103,
-        nombre: "Don Quijote de la Mancha",
-        descripcion: "La obra cumbre de la literatura española",
+        nombre: "Honor 200 5G 12+256GB Negro",
+        descripcion: "El Honor 200 destaca por su diseño elegantemente sofisticado. Su pantalla completa con bordes casi invisibles ofrece una experiencia visual impresionante.",
         stock: 10,
         imagen:
-            "https://images.unsplash.com/photo-1532012197267-da84d127e765?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80",
-        precio: "29.99",
+            "https://corprotec.com/wp-content/uploads/2024/01/Honor-200-pro.webp",
+        precio: "6500",
         isActive: true,
       ),
     ];
