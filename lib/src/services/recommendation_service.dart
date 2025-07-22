@@ -48,13 +48,23 @@ class RecommendationService with ChangeNotifier {
 
       if (response.statusCode == 200) {
         print('RecommendationService: Successfully received recommendations');
-        final List<dynamic> booksJson = response.data['recomendaciones'];
-        print(
-            'RecommendationService: Number of recommendations: ${booksJson.length}');
+        final responseData = response.data;
 
-        _recommendations.clear();
-        for (var item in booksJson) {
-          _recommendations.add(Book.fromJson(item));
+        // Verificar si la respuesta tiene el formato esperado
+        if (responseData is Map &&
+            responseData.containsKey('recomendaciones')) {
+          final List<dynamic> booksJson = responseData['recomendaciones'];
+          print(
+              'RecommendationService: Number of recommendations: ${booksJson.length}');
+
+          _recommendations.clear();
+          for (var item in booksJson) {
+            _recommendations.add(Book.fromJson(item));
+          }
+        } else {
+          print(
+              'RecommendationService: Unexpected response format, using mock data');
+          await _getMockRecommendations();
         }
 
         notifyListeners();
@@ -73,6 +83,13 @@ class RecommendationService with ChangeNotifier {
       if (e.response != null) {
         print('RecommendationService: Status: ${e.response?.statusCode}');
         print('RecommendationService: Data: ${e.response?.data}');
+
+        // Si es 503 (Service Unavailable), usar datos mock sin mostrar error
+        if (e.response?.statusCode == 503) {
+          print('RecommendationService: Service unavailable, using mock data');
+          await _getMockRecommendations();
+          return _recommendations;
+        }
       }
 
       _setError(_handleDioError(e));
@@ -104,6 +121,9 @@ class RecommendationService with ChangeNotifier {
         imagen:
             "https://www.tutiendaexperta.com/5109-large_default_2x/xiaomi-redmi-note-14-pro-5g-8gb256gb.jpg",
         precio: "3500",
+        precioConDescuento: "4000.0",
+        descuentoAplicado: "true",
+        tieneOfertaVigente: true,
         isActive: true,
       ),
       Book(
@@ -115,16 +135,23 @@ class RecommendationService with ChangeNotifier {
         imagen:
             "https://www.celulares.com/fotos/xiaomi-poco-x7-pro-98030-g.jpg",
         precio: "4500",
+        precioConDescuento: "5990.0",
+        descuentoAplicado: "true",
+        tieneOfertaVigente: true,
         isActive: true,
       ),
       Book(
         id: 103,
         nombre: "Honor 200 5G 12+256GB Negro",
-        descripcion: "El Honor 200 destaca por su diseño elegantemente sofisticado. Su pantalla completa con bordes casi invisibles ofrece una experiencia visual impresionante.",
+        descripcion:
+            "El Honor 200 destaca por su diseño elegantemente sofisticado. Su pantalla completa con bordes casi invisibles ofrece una experiencia visual impresionante.",
         stock: 10,
         imagen:
             "https://corprotec.com/wp-content/uploads/2024/01/Honor-200-pro.webp",
         precio: "6500",
+        precioConDescuento: " 5990.0",
+        descuentoAplicado: "true",
+        tieneOfertaVigente: true,
         isActive: true,
       ),
     ];

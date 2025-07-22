@@ -167,7 +167,6 @@ class _CartPageState extends State<CartPage>
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final colorScheme = theme.colorScheme;
-    final size = MediaQuery.of(context).size;
 
     // Show loading view if we're still loading or if provider is loading and we have no items
     if (_isLoading || (cartProvider.isLoading && cartItems.isEmpty)) {
@@ -195,38 +194,125 @@ class _CartPageState extends State<CartPage>
             ),
         ],
       ),
-      body: RefreshIndicator(
-        onRefresh: _loadCart,
-        child: CustomScrollView(
-          slivers: [
-            // Lista de elementos del carrito
-            SliverToBoxAdapter(
-              child: Container(
-                constraints: BoxConstraints(
-                  minHeight: size.height * 0.3,
-                  maxHeight: size.height * 0.65, // Limitar altura máxima
+      body: Column(
+        children: [
+          // Cart content - takes most of the space
+          Expanded(
+            child: RefreshIndicator(
+              onRefresh: _loadCart,
+              child: SingleChildScrollView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                child: Column(
+                  children: [
+                    // Header with logo
+                    Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          NovaLogo(
+                            size: 32,
+                            isDark: isDark,
+                          ),
+                          const Spacer(),
+                          Text(
+                            "Mi Carrito",
+                            style: theme.textTheme.headlineSmall,
+                          ),
+                          const Spacer(),
+                          const SizedBox(width: 32), // Balance the logo
+                        ],
+                      ),
+                    ),
+
+                    // Loading indicator at the top when refreshing but we already have items
+                    if (cartProvider.isLoading && cartItems.isNotEmpty)
+                      LinearProgressIndicator(
+                        backgroundColor: colorScheme.primary.withOpacity(0.2),
+                        color: colorScheme.primary,
+                      ),
+
+                    // Error message if any
+                    if (cartProvider.errorMessage != null)
+                      Container(
+                        margin: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 8),
+                        padding: const EdgeInsets.all(12),
+                        decoration: BoxDecoration(
+                          color: colorScheme.errorContainer,
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.error_outline, color: colorScheme.error),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: Text(
+                                cartProvider.errorMessage!,
+                                style: theme.textTheme.bodyMedium!.copyWith(
+                                  color: colorScheme.onErrorContainer,
+                                ),
+                              ),
+                            ),
+                            IconButton(
+                              icon:
+                                  Icon(Icons.refresh, color: colorScheme.error),
+                              onPressed: _loadCart,
+                            ),
+                          ],
+                        ),
+                      ),
+
+                    // Cart items with animation
+                    FadeTransition(
+                      opacity: _cartAnimation,
+                      child: SlideTransition(
+                        position: Tween<Offset>(
+                          begin: const Offset(0, 0.1),
+                          end: Offset.zero,
+                        ).animate(_cartAnimation),
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(horizontal: 16),
+                          child: Column(
+                            children: [
+                              // Cart items
+                              if (cartItems.isNotEmpty)
+                                ...List.generate(cartItems.length, (index) {
+                                  final cartItem = cartItems[index];
+                                  print(
+                                      'CartPage: Building item at index $index, id: ${cartItem.id}');
+                                  return _CartItemCard(
+                                    cartItem: cartItem,
+                                    onUpdateQuantity: (newQuantity) =>
+                                        _updateQuantity(cartItem, newQuantity),
+                                    onRemove: () => _removeItem(cartItem.id!),
+                                  );
+                                }),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+
+                    // Recommendations section - with controlled height
+                    if (cartItems.isNotEmpty)
+                      Container(
+                        margin: const EdgeInsets.only(top: 16, bottom: 8),
+                        height: 180, // Fixed height to prevent overflow
+                        child: RecommendationCarousel(
+                          bookIds:
+                              cartItems.map((item) => item.book.id).toList(),
+                        ),
+                      ),
+
+                    // Extra space at bottom for safe area
+                    const SizedBox(height: 100),
+                  ],
                 ),
-                child: _buildCartContent(),
               ),
             ),
-
-            // Recomendaciones (si hay elementos en el carrito)
-            if (cartItems.isNotEmpty)
-              SliverToBoxAdapter(
-                child: ConstrainedBox(
-                  constraints: BoxConstraints(
-                    maxHeight: 200, // Altura máxima para recomendaciones
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.only(bottom: 8.0),
-                    child: RecommendationCarousel(
-                      bookIds: cartItems.map((item) => item.book.id).toList(),
-                    ),
-                  ),
-                ),
-              ),
-          ],
-        ),
+          ),
+        ],
       ),
       bottomNavigationBar: cartItems.isNotEmpty ? _buildTotalBar() : null,
     );
@@ -238,111 +324,6 @@ class _CartPageState extends State<CartPage>
         0,
         (sum, item) =>
             sum + (item.quantity! * (double.tryParse(item.book.precio) ?? 0)));
-  }
-
-  Widget _buildCartContent() {
-    final theme = Theme.of(context);
-    final colorScheme = theme.colorScheme;
-    final isDark = theme.brightness == Brightness.dark;
-    final cartProvider = Provider.of<ShoppingCartProvider>(context);
-    final cartItems = cartProvider.items;
-    final size = MediaQuery.of(context).size;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        // Header
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              NovaLogo(
-                size: 32,
-                isDark: isDark,
-              ),
-              const Spacer(),
-              Text(
-                "Mi Carrito",
-                style: theme.textTheme.headlineSmall,
-              ),
-              const Spacer(),
-              const SizedBox(width: 32), // Balance the logo
-            ],
-          ),
-        ),
-
-        // Loading indicator at the top when refreshing but we already have items
-        if (cartProvider.isLoading && cartItems.isNotEmpty)
-          LinearProgressIndicator(
-            backgroundColor: colorScheme.primary.withOpacity(0.2),
-            color: colorScheme.primary,
-          ),
-
-        // Error message if any
-        if (cartProvider.errorMessage != null)
-          Container(
-            margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: colorScheme.errorContainer,
-              borderRadius: BorderRadius.circular(8),
-            ),
-            child: Row(
-              children: [
-                Icon(Icons.error_outline, color: colorScheme.error),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: Text(
-                    cartProvider.errorMessage!,
-                    style: theme.textTheme.bodyMedium!.copyWith(
-                      color: colorScheme.onErrorContainer,
-                    ),
-                  ),
-                ),
-                IconButton(
-                  icon: Icon(Icons.refresh, color: colorScheme.error),
-                  onPressed: _loadCart,
-                ),
-              ],
-            ),
-          ),
-
-        // Cart items with animation
-        Expanded(
-          child: FadeTransition(
-            opacity: _cartAnimation,
-            child: SlideTransition(
-              position: Tween<Offset>(
-                begin: const Offset(0, 0.1),
-                end: Offset.zero,
-              ).animate(_cartAnimation),
-              child: RefreshIndicator(
-                onRefresh: _loadCart,
-                child: ListView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  children: [
-                    // Cart items
-                    if (cartItems.isNotEmpty)
-                      ...List.generate(cartItems.length, (index) {
-                        final cartItem = cartItems[index];
-                        print(
-                            'CartPage: Building item at index $index, id: ${cartItem.id}');
-                        return _CartItemCard(
-                          cartItem: cartItem,
-                          onUpdateQuantity: (newQuantity) =>
-                              _updateQuantity(cartItem, newQuantity),
-                          onRemove: () => _removeItem(cartItem.id!),
-                        );
-                      }),
-                  ],
-                ),
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
   }
 
   Widget _buildTotalBar() {
@@ -537,159 +518,126 @@ class _EmptyCartView extends StatelessWidget {
         body: SafeArea(
           child: RefreshIndicator(
             onRefresh: () async => onRefresh(),
-            child: CustomScrollView(
-              slivers: [
-                // Logo and Title
-                SliverToBoxAdapter(
-                  child: Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        NovaLogo(
-                          size: 32,
-                          isDark: isDark,
-                        ),
-                        const Spacer(),
-                        Text(
-                          "Mi Carrito",
-                          style: theme.textTheme.headlineSmall,
-                        ),
-                        const Spacer(),
-                        const SizedBox(width: 32), // Balance the logo
-                      ],
+            child: LayoutBuilder(
+              builder: (context, constraints) {
+                return SingleChildScrollView(
+                  physics: const AlwaysScrollableScrollPhysics(),
+                  child: ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: constraints.maxHeight,
                     ),
-                  ),
-                ),
-
-                // Empty state
-                SliverToBoxAdapter(
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surface,
-                      borderRadius: BorderRadius.circular(16),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.05),
-                          blurRadius: 8,
-                          offset: const Offset(0, 2),
-                        ),
-                      ],
-                    ),
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Container(
-                          padding: const EdgeInsets.all(16),
-                          decoration: BoxDecoration(
-                            color: colorScheme.primary.withOpacity(0.1),
-                            shape: BoxShape.circle,
-                          ),
-                          child: Icon(
-                            Icons.shopping_cart_outlined,
-                            size: 48,
-                            color: colorScheme.primary,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'Tu carrito está vacío',
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                            color: colorScheme.onSurface,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Encuentra libros increíbles para agregar a tu carrito',
-                          style: theme.textTheme.bodyMedium!.copyWith(
-                            color: colorScheme.onSurface.withOpacity(0.7),
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                        const SizedBox(height: 24),
-                        ElevatedButton.icon(
-                          onPressed: () {
-                            print('EmptyCartView: Browse books button pressed');
-                            Navigator.pushReplacementNamed(
-                                context, Routes.BOOKS);
-                          },
-                          icon: const Icon(Icons.book_outlined),
-                          label: const Text('Explorar Librería'),
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor: colorScheme.primary,
-                            foregroundColor: colorScheme.onPrimary,
-                            padding: const EdgeInsets.symmetric(
-                              horizontal: 24,
-                              vertical: 12,
-                            ),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12),
+                    child: IntrinsicHeight(
+                      child: Column(
+                        children: [
+                          // Logo and Title
+                          Padding(
+                            padding: const EdgeInsets.all(16.0),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                NovaLogo(
+                                  size: 32,
+                                  isDark: isDark,
+                                ),
+                                const Spacer(),
+                                Text(
+                                  "Mi Carrito",
+                                  style: theme.textTheme.headlineSmall,
+                                ),
+                                const Spacer(),
+                                const SizedBox(width: 32), // Balance the logo
+                              ],
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
 
-                // Recommendations title
-                SliverToBoxAdapter(
-                  child: Container(
-                    margin: const EdgeInsets.symmetric(horizontal: 16),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surface.withOpacity(0.8),
-                      borderRadius: const BorderRadius.vertical(
-                        top: Radius.circular(16),
-                      ),
-                    ),
-                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 0),
-                    child: Row(
-                      children: [
-                        Icon(
-                          Icons.star_rounded,
-                          color: colorScheme.primary,
-                          size: 24,
-                        ),
-                        const SizedBox(width: 12),
-                        Expanded(
-                          child: Text(
-                            'Productos que podrían interesarte',
-                            style: theme.textTheme.titleLarge?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: colorScheme.onSurface,
-                              fontSize: 20,
+                          // Empty state - takes available space
+                          Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.fromLTRB(16, 0, 16, 20),
+                              decoration: BoxDecoration(
+                                color: colorScheme.surface,
+                                borderRadius: BorderRadius.circular(16),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: Colors.black.withOpacity(0.05),
+                                    blurRadius: 8,
+                                    offset: const Offset(0, 2),
+                                  ),
+                                ],
+                              ),
+                              padding: const EdgeInsets.all(24),
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Container(
+                                    padding: const EdgeInsets.all(16),
+                                    decoration: BoxDecoration(
+                                      color:
+                                          colorScheme.primary.withOpacity(0.1),
+                                      shape: BoxShape.circle,
+                                    ),
+                                    child: Icon(
+                                      Icons.shopping_cart_outlined,
+                                      size: 48,
+                                      color: colorScheme.primary,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Text(
+                                    'Tu carrito está vacío',
+                                    style: theme.textTheme.titleLarge?.copyWith(
+                                      fontWeight: FontWeight.bold,
+                                      color: colorScheme.onSurface,
+                                    ),
+                                  ),
+                                  const SizedBox(height: 8),
+                                  Text(
+                                    'Encuentra productos increíbles para agregar a tu carrito',
+                                    style: theme.textTheme.bodyMedium!.copyWith(
+                                      color: colorScheme.onSurface
+                                          .withOpacity(0.7),
+                                    ),
+                                    textAlign: TextAlign.center,
+                                  ),
+                                  const SizedBox(height: 24),
+                                  ElevatedButton.icon(
+                                    onPressed: () {
+                                      print(
+                                          'EmptyCartView: Browse books button pressed');
+                                      Navigator.pushReplacementNamed(
+                                          context, Routes.BOOKS);
+                                    },
+                                    icon: const Icon(Icons.book_outlined),
+                                    label: const Text('Explorar Productos'),
+                                    style: ElevatedButton.styleFrom(
+                                      backgroundColor: colorScheme.primary,
+                                      foregroundColor: colorScheme.onPrimary,
+                                      padding: const EdgeInsets.symmetric(
+                                        horizontal: 24,
+                                        vertical: 12,
+                                      ),
+                                      shape: RoundedRectangleBorder(
+                                        borderRadius: BorderRadius.circular(12),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
 
-                // Recommendations for empty cart
-                SliverToBoxAdapter(
-                  child: Container(
-                    margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                    decoration: BoxDecoration(
-                      color: colorScheme.surface.withOpacity(0.8),
-                      borderRadius: const BorderRadius.vertical(
-                        bottom: Radius.circular(16),
+                          // Recommendations for empty cart - with fixed height
+                          Container(
+                            height: 180,
+                            margin: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                            child: const RecommendationCarousel(),
+                          ),
+                        ],
                       ),
-                    ),
-                    padding: const EdgeInsets.only(bottom: 16),
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(
-                        // Valor más pequeño pero suficiente
-                        maxHeight: 250,
-                      ),
-                      child: const RecommendationCarousel(),
                     ),
                   ),
-                ),
-              ],
+                );
+              },
             ),
           ),
         ),
@@ -995,7 +943,7 @@ class _CartItemCard extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  '\$${(double.tryParse(book.precio) ?? 0) * cartItem.quantity!}',
+                  '\$${((double.tryParse(book.precio) ?? 0) * cartItem.quantity!).toStringAsFixed(2)}',
                   style: theme.textTheme.bodyLarge?.copyWith(
                     fontWeight: FontWeight.bold,
                     color: colorScheme.primary,

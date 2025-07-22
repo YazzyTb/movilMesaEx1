@@ -56,6 +56,7 @@ class _RecommendationCarouselState extends State<RecommendationCarousel> {
     if (isLoading) {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        height: 60,
         decoration: BoxDecoration(
           color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
@@ -67,8 +68,6 @@ class _RecommendationCarouselState extends State<RecommendationCarousel> {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(16),
-        height: 80,
         child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -98,6 +97,7 @@ class _RecommendationCarouselState extends State<RecommendationCarousel> {
     if (hasError && recommendations.isEmpty) {
       return Container(
         margin: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+        height: 60,
         decoration: BoxDecoration(
           color: colorScheme.surface,
           borderRadius: BorderRadius.circular(16),
@@ -109,8 +109,6 @@ class _RecommendationCarouselState extends State<RecommendationCarousel> {
             ),
           ],
         ),
-        padding: const EdgeInsets.all(16),
-        height: 80,
         child: Center(
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -149,11 +147,9 @@ class _RecommendationCarouselState extends State<RecommendationCarousel> {
       return const SizedBox.shrink();
     }
 
-    // Fixed height for the recommendation section - reduced to avoid overflow
-    const double carouselHeight = 120.0;
-
+    // Main recommendations widget with controlled dimensions
     return Container(
-      height: carouselHeight,
+      height: 160, // Fixed height
       margin: const EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
       decoration: BoxDecoration(
         color: Colors.white,
@@ -169,10 +165,11 @@ class _RecommendationCarouselState extends State<RecommendationCarousel> {
       child: Column(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // Simple header to save space
+          // Header
           Container(
+            height: 40,
             padding:
-                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 6.0),
+                const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             decoration: BoxDecoration(
               color: colorScheme.primary.withOpacity(0.1),
               borderRadius: const BorderRadius.vertical(
@@ -184,7 +181,7 @@ class _RecommendationCarouselState extends State<RecommendationCarousel> {
                 Icon(
                   Icons.local_fire_department_rounded,
                   color: colorScheme.primary,
-                  size: 14,
+                  size: 16,
                 ),
                 const SizedBox(width: 8),
                 Expanded(
@@ -193,7 +190,7 @@ class _RecommendationCarouselState extends State<RecommendationCarousel> {
                     style: theme.textTheme.bodyMedium?.copyWith(
                       fontWeight: FontWeight.bold,
                       color: colorScheme.primary,
-                      fontSize: 12,
+                      fontSize: 13,
                     ),
                   ),
                 ),
@@ -201,7 +198,7 @@ class _RecommendationCarouselState extends State<RecommendationCarousel> {
                   onTap: _loadRecommendations,
                   child: Icon(
                     Icons.refresh_rounded,
-                    size: 12,
+                    size: 14,
                     color: colorScheme.primary,
                   ),
                 ),
@@ -209,12 +206,11 @@ class _RecommendationCarouselState extends State<RecommendationCarousel> {
             ),
           ),
 
-          // Books list - with fixed height
-          SizedBox(
-            height: 85, // Fixed height for list (reduced from 95)
+          // Books list
+          Expanded(
             child: ListView.builder(
               scrollDirection: Axis.horizontal,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
               itemCount: recommendations.length,
               itemBuilder: (context, index) {
                 final book = recommendations[index];
@@ -238,11 +234,9 @@ class _RecommendationCard extends StatelessWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
 
-    // Reduced dimensions to avoid overflow
-    const double cardWidth = 100.0;
-    const double cardHeight = 70.0;
-    const double imageWidth = 45.0;
-    const double imageHeight = 70.0;
+    const double cardWidth = 120.0;
+    const double cardHeight = 100.0;
+    const double imageWidth = 50.0;
 
     return GestureDetector(
       onTap: () {
@@ -275,7 +269,7 @@ class _RecommendationCard extends StatelessWidget {
                   const BorderRadius.horizontal(left: Radius.circular(8)),
               child: SizedBox(
                 width: imageWidth,
-                height: imageHeight,
+                height: cardHeight,
                 child: Image.network(
                   book.imagen,
                   fit: BoxFit.cover,
@@ -285,7 +279,7 @@ class _RecommendationCard extends StatelessWidget {
                       child: Center(
                         child: Icon(
                           Icons.book,
-                          size: 16,
+                          size: 20,
                           color: colorScheme.onPrimaryContainer,
                         ),
                       ),
@@ -295,43 +289,52 @@ class _RecommendationCard extends StatelessWidget {
               ),
             ),
 
-            // Book info in minimal space
+            // Book info
             Expanded(
               child: Padding(
-                padding: const EdgeInsets.all(4.0),
+                padding: const EdgeInsets.all(6.0),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    // Title with reduced font
+                    // Title
                     Text(
                       book.nombre,
-                      maxLines: 2,
+                      maxLines: 3,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(
-                        fontSize: 8,
+                        fontSize: 10,
                         fontWeight: FontWeight.bold,
+                        height: 1.2,
                       ),
                     ),
 
-                    const Spacer(),
-
-                    // Price at bottom
+                    // Price and add button
                     Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(
                           '\$${book.precio}',
                           style: TextStyle(
                             color: colorScheme.primary,
                             fontWeight: FontWeight.bold,
-                            fontSize: 9,
+                            fontSize: 11,
                           ),
                         ),
-                        const Spacer(),
-                        Icon(
-                          Icons.add_circle,
-                          color: colorScheme.primary,
-                          size: 12,
+                        GestureDetector(
+                          onTap: () => _addToCart(context),
+                          child: Container(
+                            padding: const EdgeInsets.all(2),
+                            decoration: BoxDecoration(
+                              color: colorScheme.primary,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: Icon(
+                              Icons.add,
+                              color: colorScheme.onPrimary,
+                              size: 12,
+                            ),
+                          ),
                         ),
                       ],
                     ),
@@ -345,7 +348,6 @@ class _RecommendationCard extends StatelessWidget {
     );
   }
 
-  // Método para añadir al carrito
   Future<void> _addToCart(BuildContext context) async {
     try {
       final cartProvider =

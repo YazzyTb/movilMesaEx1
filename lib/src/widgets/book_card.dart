@@ -27,7 +27,7 @@ class BookCard extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          // Book cover with price tag and stock indicator
+          // Book cover with price tag and discount indicator
           Stack(
             children: [
               // Cover image
@@ -46,6 +46,51 @@ class BookCard extends StatelessWidget {
                 ),
               ),
 
+              // Discount badge (if on sale)
+              if (book.estaEnOferta)
+                Positioned(
+                  top: 8,
+                  left: 8,
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.red.shade600, Colors.red.shade400],
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                      ),
+                      borderRadius: BorderRadius.circular(8),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.red.withOpacity(0.3),
+                          blurRadius: 4,
+                          offset: const Offset(0, 2),
+                        ),
+                      ],
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.local_fire_department,
+                          color: Colors.white,
+                          size: 12,
+                        ),
+                        const SizedBox(width: 2),
+                        Text(
+                          '-${book.porcentajeDescuento.toStringAsFixed(0)}%',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 11,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+
               // Price tag
               Positioned(
                 top: 12,
@@ -54,7 +99,9 @@ class BookCard extends StatelessWidget {
                   padding:
                       const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                   decoration: BoxDecoration(
-                    color: colorScheme.primaryContainer,
+                    color: book.estaEnOferta
+                        ? Colors.orange.shade100
+                        : colorScheme.primaryContainer,
                     borderRadius: BorderRadius.circular(12),
                     boxShadow: [
                       BoxShadow(
@@ -63,13 +110,44 @@ class BookCard extends StatelessWidget {
                         offset: const Offset(0, 3),
                       ),
                     ],
+                    border: book.estaEnOferta
+                        ? Border.all(color: Colors.orange.shade300, width: 1)
+                        : null,
                   ),
-                  child: Text(
-                    '\$${book.precio}',
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: colorScheme.onPrimaryContainer,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (book.estaEnOferta) ...[
+                        // Precio original tachado
+                        Text(
+                          '\$${book.precio}',
+                          style: TextStyle(
+                            color: Colors.grey.shade600,
+                            fontSize: 10,
+                            decoration: TextDecoration.lineThrough,
+                            decorationColor: Colors.red,
+                            decorationThickness: 2,
+                          ),
+                        ),
+                        // Precio con descuento
+                        Text(
+                          '\$${book.precioConDescuento}',
+                          style: TextStyle(
+                            color: Colors.orange.shade800,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 14,
+                          ),
+                        ),
+                      ] else
+                        Text(
+                          '\$${book.precio}',
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: colorScheme.onPrimaryContainer,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                    ],
                   ),
                 ),
               ),
@@ -122,15 +200,81 @@ class BookCard extends StatelessWidget {
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 8),
+
+                // Mostrar información de la oferta si existe
+                if (book.estaEnOferta && book.oferta != null) ...[
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        colors: [Colors.orange.shade100, Colors.orange.shade50],
+                        begin: Alignment.centerLeft,
+                        end: Alignment.centerRight,
+                      ),
+                      borderRadius: BorderRadius.circular(6),
+                      border:
+                          Border.all(color: Colors.orange.shade300, width: 0.5),
+                    ),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          Icons.local_offer,
+                          color: Colors.orange.shade700,
+                          size: 14,
+                        ),
+                        const SizedBox(width: 4),
+                        Expanded(
+                          child: Text(
+                            book.oferta!.nombre,
+                            style: TextStyle(
+                              color: Colors.orange.shade800,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 11,
+                            ),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+
+                  // Mostrar ahorro
+                  Container(
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                    decoration: BoxDecoration(
+                      color: Colors.green.shade50,
+                      borderRadius: BorderRadius.circular(4),
+                      border:
+                          Border.all(color: Colors.green.shade200, width: 0.5),
+                    ),
+                    child: Text(
+                      'Ahorras \${book.ahorroTotal}',
+                      style: TextStyle(
+                        color: Colors.green.shade700,
+                        fontWeight: FontWeight.w600,
+                        fontSize: 10,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                ],
+
                 Text(
                   book.descripcion,
                   style: theme.textTheme.bodySmall?.copyWith(
                     color: colorScheme.onSurfaceVariant,
                   ),
-                  maxLines: 2,
+                  maxLines:
+                      book.estaEnOferta ? 1 : 2, // Menos líneas si hay oferta
                   overflow: TextOverflow.ellipsis,
                 ),
                 const SizedBox(height: 12),
+
                 Row(
                   children: [
                     Icon(
@@ -150,20 +294,40 @@ class BookCard extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                       ),
                     ),
+
+                    // Mostrar categoría si hay espacio
+                    if (book.categoria != null && !book.estaEnOferta) ...[
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          book.categoria!.nombre,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: colorScheme.primary,
+                            fontStyle: FontStyle.italic,
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.end,
+                        ),
+                      ),
+                    ],
                   ],
                 ),
                 const SizedBox(height: 16),
+
                 Row(
                   children: [
-                    // Add to cart button - Now just an icon button
+                    // Add to cart button
                     Expanded(
                       child: ElevatedButton(
                         onPressed: book.stock > 0
                             ? () => _showQuantitySelector(context)
                             : null,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: colorScheme.primary,
-                          foregroundColor: colorScheme.onPrimary,
+                          backgroundColor: book.estaEnOferta
+                              ? Colors.orange.shade600
+                              : colorScheme.primary,
+                          foregroundColor: Colors.white,
                           disabledBackgroundColor: Colors.grey.shade300,
                           disabledForegroundColor: Colors.grey.shade600,
                           padding: const EdgeInsets.symmetric(vertical: 12),
@@ -171,15 +335,31 @@ class BookCard extends StatelessWidget {
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          elevation: 2,
+                          elevation: book.estaEnOferta ? 4 : 2,
                         ),
-                        child: const Icon(
-                          Icons.shopping_cart_outlined,
-                          size: 24,
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              book.estaEnOferta
+                                  ? Icons.local_fire_department
+                                  : Icons.shopping_cart_outlined,
+                              size: 20,
+                            ),
+                            const SizedBox(width: 8),
+                            Text(
+                              book.estaEnOferta ? 'OFERTA' : 'Agregar',
+                              style: const TextStyle(
+                                fontWeight: FontWeight.bold,
+                                fontSize: 13,
+                              ),
+                            ),
+                          ],
                         ),
                       ),
                     ),
                     const SizedBox(width: 12),
+
                     // Details button
                     IconButton(
                       onPressed: () {
@@ -192,12 +372,17 @@ class BookCard extends StatelessWidget {
                       icon: const Icon(Icons.info_outline, size: 24),
                       style: IconButton.styleFrom(
                         backgroundColor: colorScheme.surfaceVariant,
-                        foregroundColor: colorScheme.primary,
+                        foregroundColor: book.estaEnOferta
+                            ? Colors.orange.shade700
+                            : colorScheme.primary,
                         fixedSize: const Size(48, 48),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                           side: BorderSide(
-                              color: colorScheme.primary, width: 1.5),
+                              color: book.estaEnOferta
+                                  ? Colors.orange.shade300
+                                  : colorScheme.primary,
+                              width: 1.5),
                         ),
                         elevation: 2,
                       ),
@@ -245,13 +430,42 @@ class BookCard extends StatelessWidget {
             if (success) {
               ScaffoldMessenger.of(context).showSnackBar(
                 SnackBar(
-                  content: Text('${book.nombre} añadido al carrito'),
-                  backgroundColor: Theme.of(context).colorScheme.primary,
+                  content: Row(
+                    children: [
+                      Icon(
+                        book.estaEnOferta
+                            ? Icons.local_fire_department
+                            : Icons.check_circle,
+                        color: Colors.white,
+                        size: 20,
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: Text(
+                          book.estaEnOferta
+                              ? '🔥 ${book.nombre} añadido con oferta!'
+                              : '${book.nombre} añadido al carrito',
+                        ),
+                      ),
+                    ],
+                  ),
+                  backgroundColor: book.estaEnOferta
+                      ? Colors.orange.shade600
+                      : Theme.of(context).colorScheme.primary,
                   behavior: SnackBarBehavior.floating,
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  duration: const Duration(seconds: 2),
+                  duration: const Duration(seconds: 3),
+                  action: book.estaEnOferta
+                      ? SnackBarAction(
+                          label: 'Ver ahorro',
+                          textColor: Colors.white,
+                          onPressed: () {
+                            Navigator.pushNamed(context, Routes.CART);
+                          },
+                        )
+                      : null,
                 ),
               );
             } else {
